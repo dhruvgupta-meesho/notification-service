@@ -54,7 +54,7 @@ func (sc *ServiceContainer)Kafkainit(){
 			case msg := <-partitionConsumer.Messages():
 				var v kafkamsg
 				json.Unmarshal(msg.Value, &v)
-				log.Printf("Message received: for id = %d value= %s", v.Id, string(v.EmailMsg))
+				log.Printf("Message received: for id = %d value = %s", v.Id, string(v.EmailMsg))
 				sc.SendMail(string(msg.Value), v.Id)
 			case <-signals:
 				log.Println("Interrupt detected, shutting down...")
