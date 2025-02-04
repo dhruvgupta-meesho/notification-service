@@ -13,7 +13,12 @@ import (
 func (sc *ServiceContainer) SendMail (msg string, id int64) {
 
 	fmt.Println("string that was received => " + msg)
-	godotenv.Load(".env")
+	err := godotenv.Load(".env")
+	
+	if err != nil{
+		log.Fatal("Couldn't load env variables!")
+	}
+
 	from := "dhruvipul1234@gmail.com"
 	password := os.Getenv("EMAIL_PASS")
 

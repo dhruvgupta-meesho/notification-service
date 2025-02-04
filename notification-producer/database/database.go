@@ -12,7 +12,10 @@ import (
 )
 
 func DbConnect() (*sql.DB){
-	godotenv.Load(".env")
+	err := godotenv.Load("../.env")
+	if err != nil{
+		log.Fatal("Couldn't load env variables!")
+	}
 	dsn := fmt.Sprintf("root:%s@tcp(localhost:3306)/notification",  os.Getenv("DB_PASS"))
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {

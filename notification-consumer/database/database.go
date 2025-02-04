@@ -21,7 +21,10 @@ type Req struct {
 }
 
 func DbConnect() *sql.DB {
-	godotenv.Load(".env")
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal("Couldn't load env variables! ", err)
+	}
 	dsn := fmt.Sprintf("root:%s@tcp(localhost:3306)/notification",  os.Getenv("DB_PASS"))
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -30,10 +33,10 @@ func DbConnect() *sql.DB {
 	return db
 }
 
-func UpdateEmailRequest (db *sql.DB, r *Req)  {
+func UpdateEmailRequest(db *sql.DB, r *Req)  {
 	_, err := db.Exec("UPDATE EmailRequest SET failure_code = ?, failure_comments = ? WHERE id = ?", r.Failure_code, r.Failure_comments, r.Id)
 	if err != nil {
-		log.Fatalf("Failed to execute update query: %v", err)
+		log.Printf("Failed to execute update query: %v", err)
 	}
 }
 

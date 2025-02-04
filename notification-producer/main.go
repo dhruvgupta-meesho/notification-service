@@ -15,7 +15,7 @@ func main() {
 	lis, err := net.Listen("tcp", ":5051")
 
 	if err != nil {
-		log.Fatalf("failed to listen on port 5051: %v", err)
+		log.Fatalf("Failed to listen on port 5051! : %v", err)
 		}
 
 	db := database.DbConnect()
@@ -25,6 +25,6 @@ func main() {
 	log.Printf("gRPC server listening at %v", lis.Addr())
 
 	if err := s.Serve(lis); err != nil {
-	log.Fatalf("failed to serve: %v", err)
+	log.Fatalf("Failed to serve! : %v", err)
 	}
 }

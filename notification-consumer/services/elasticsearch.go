@@ -13,7 +13,10 @@ import (
 )
 
 func getESClient() *elasticsearch.Client{
-	godotenv.Load(".env")
+	err := godotenv.Load(".env")
+	if err != nil{
+		log.Fatal("Couldn't load env variables!")
+	}
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			"http://localhost:9200",
