@@ -19,14 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Notify_GetNotificationInfo_FullMethodName = "/Notify/GetNotificationInfo"
+	Notify_SendNotificationInfo_FullMethodName = "/Notify/SendNotificationInfo"
+	Notify_AddBlacklisted_FullMethodName       = "/Notify/AddBlacklisted"
+	Notify_RemoveBlacklisted_FullMethodName    = "/Notify/RemoveBlacklisted"
 )
 
 // NotifyClient is the client API for Notify service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotifyClient interface {
-	GetNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error)
+	SendNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error)
+	AddBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
+	RemoveBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
 }
 
 type notifyClient struct {
@@ -37,10 +41,30 @@ func NewNotifyClient(cc grpc.ClientConnInterface) NotifyClient {
 	return &notifyClient{cc}
 }
 
-func (c *notifyClient) GetNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error) {
+func (c *notifyClient) SendNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GenericResponse)
-	err := c.cc.Invoke(ctx, Notify_GetNotificationInfo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Notify_SendNotificationInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notifyClient) AddBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenericResponse)
+	err := c.cc.Invoke(ctx, Notify_AddBlacklisted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notifyClient) RemoveBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenericResponse)
+	err := c.cc.Invoke(ctx, Notify_RemoveBlacklisted_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +75,9 @@ func (c *notifyClient) GetNotificationInfo(ctx context.Context, in *EmailRequest
 // All implementations must embed UnimplementedNotifyServer
 // for forward compatibility.
 type NotifyServer interface {
-	GetNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error)
+	SendNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error)
+	AddBlacklisted(context.Context, *Email) (*GenericResponse, error)
+	RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error)
 	mustEmbedUnimplementedNotifyServer()
 }
 
@@ -62,8 +88,14 @@ type NotifyServer interface {
 // pointer dereference when methods are called.
 type UnimplementedNotifyServer struct{}
 
-func (UnimplementedNotifyServer) GetNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationInfo not implemented")
+func (UnimplementedNotifyServer) SendNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotificationInfo not implemented")
+}
+func (UnimplementedNotifyServer) AddBlacklisted(context.Context, *Email) (*GenericResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddBlacklisted not implemented")
+}
+func (UnimplementedNotifyServer) RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveBlacklisted not implemented")
 }
 func (UnimplementedNotifyServer) mustEmbedUnimplementedNotifyServer() {}
 func (UnimplementedNotifyServer) testEmbeddedByValue()                {}
@@ -86,20 +118,56 @@ func RegisterNotifyServer(s grpc.ServiceRegistrar, srv NotifyServer) {
 	s.RegisterService(&Notify_ServiceDesc, srv)
 }
 
-func _Notify_GetNotificationInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Notify_SendNotificationInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EmailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotifyServer).GetNotificationInfo(ctx, in)
+		return srv.(NotifyServer).SendNotificationInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Notify_GetNotificationInfo_FullMethodName,
+		FullMethod: Notify_SendNotificationInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotifyServer).GetNotificationInfo(ctx, req.(*EmailRequest))
+		return srv.(NotifyServer).SendNotificationInfo(ctx, req.(*EmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Notify_AddBlacklisted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Email)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).AddBlacklisted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_AddBlacklisted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).AddBlacklisted(ctx, req.(*Email))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Notify_RemoveBlacklisted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Email)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).RemoveBlacklisted(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_RemoveBlacklisted_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).RemoveBlacklisted(ctx, req.(*Email))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +180,16 @@ var Notify_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*NotifyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetNotificationInfo",
-			Handler:    _Notify_GetNotificationInfo_Handler,
+			MethodName: "SendNotificationInfo",
+			Handler:    _Notify_SendNotificationInfo_Handler,
+		},
+		{
+			MethodName: "AddBlacklisted",
+			Handler:    _Notify_AddBlacklisted_Handler,
+		},
+		{
+			MethodName: "RemoveBlacklisted",
+			Handler:    _Notify_RemoveBlacklisted_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

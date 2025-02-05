@@ -12,8 +12,14 @@ message EmailRequest{
     optional string updated_at = 7;
 }
 
+message Email{
+    string emailId = 2;
+}
+
 service Notify{
-    rpc GetNotificationInfo(EmailRequest) returns (GenericResponse){}
+    rpc SendNotificationInfo(EmailRequest) returns (GenericResponse){}
+    rpc AddBlacklisted(Email) returns (GenericResponse){}
+    rpc RemoveBlacklisted(Email) returns (GenericResponse){}
 }
   
 message GenericResponse {

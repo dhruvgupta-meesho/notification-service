@@ -20,12 +20,11 @@ func MakeRedisConn() *redis.Client{
 func (sc *ServiceContainer) CheckIsBlocked (to string) bool {
 	time.Sleep(4 * time.Second) 
 	ctx := context.Background()
-	sc.Rdb.SAdd(ctx, "blocked", "hell")
 	v := sc.Rdb.SIsMember(ctx, "blocked", to)
 	if v.Val(){
-		log.Println("It is Present!")	
+		log.Println("It is Present! ", to)	
 	}else{
-		log.Println("It is not Present!")
+		log.Println("It is not Present!", to)
 	}
 	return v.Val()
 }
