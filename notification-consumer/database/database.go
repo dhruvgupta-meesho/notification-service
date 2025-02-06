@@ -11,7 +11,7 @@ import (
 )
 
 type Req struct {
-	Id               int64
+	Id               string
 	EmailId          string
 	Message          string
 	Failure_code     int64
@@ -40,7 +40,7 @@ func UpdateEmailRequest(db *sql.DB, r *Req)  {
 	}
 }
 
-func GetEmailRequest(db *sql.DB, id int64)(Req, error){
+func GetEmailRequest(db *sql.DB, id string)(Req, error){
 	var r Req
 	err := db.QueryRow("SELECT * FROM EmailRequest WHERE id = ?", id).Scan(&r.Id, &r.EmailId, &r.Message, &r.Failure_code, &r.Failure_comments, &r.Created_at, &r.Updated_at)
 	if err != nil {

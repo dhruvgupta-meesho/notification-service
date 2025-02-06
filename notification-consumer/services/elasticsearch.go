@@ -19,7 +19,7 @@ func getESClient() *elasticsearch.Client{
 	}
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			"http://localhost:" + os.Getenv("ELASTIC_PORT"),
 		},
 		Password: os.Getenv("ELASTIC_PASS"),
 	}

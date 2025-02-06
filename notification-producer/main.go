@@ -1,5 +1,4 @@
 package main
-
 import (
 	"log"
 	"net"
@@ -23,11 +22,12 @@ func main() {
 	rdb := services.MakeRedisConn()
 
 	s := grpc.NewServer()
-	model.RegisterNotifyServer(s, &handler.Server{
+
+	model.RegisterNotifyServer(s,&handler.Server{
 		DB: db,
 		RDB: rdb,
 	})
-	
+
 	log.Printf("gRPC server listening at %v", lis.Addr())
 
 	if err := s.Serve(lis); err != nil {

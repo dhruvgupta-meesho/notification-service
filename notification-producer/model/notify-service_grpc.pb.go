@@ -22,6 +22,7 @@ const (
 	Notify_SendNotificationInfo_FullMethodName = "/Notify/SendNotificationInfo"
 	Notify_AddBlacklisted_FullMethodName       = "/Notify/AddBlacklisted"
 	Notify_RemoveBlacklisted_FullMethodName    = "/Notify/RemoveBlacklisted"
+	Notify_GetRequestStatus_FullMethodName     = "/Notify/GetRequestStatus"
 )
 
 // NotifyClient is the client API for Notify service.
@@ -31,6 +32,7 @@ type NotifyClient interface {
 	SendNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error)
 	AddBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
 	RemoveBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
+	GetRequestStatus(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*RequestStatusResponse, error)
 }
 
 type notifyClient struct {
@@ -71,6 +73,16 @@ func (c *notifyClient) RemoveBlacklisted(ctx context.Context, in *Email, opts ..
 	return out, nil
 }
 
+func (c *notifyClient) GetRequestStatus(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*RequestStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RequestStatusResponse)
+	err := c.cc.Invoke(ctx, Notify_GetRequestStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NotifyServer is the server API for Notify service.
 // All implementations must embed UnimplementedNotifyServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type NotifyServer interface {
 	SendNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error)
 	AddBlacklisted(context.Context, *Email) (*GenericResponse, error)
 	RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error)
+	GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error)
 	mustEmbedUnimplementedNotifyServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedNotifyServer) AddBlacklisted(context.Context, *Email) (*Gener
 }
 func (UnimplementedNotifyServer) RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveBlacklisted not implemented")
+}
+func (UnimplementedNotifyServer) GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRequestStatus not implemented")
 }
 func (UnimplementedNotifyServer) mustEmbedUnimplementedNotifyServer() {}
 func (UnimplementedNotifyServer) testEmbeddedByValue()                {}
@@ -172,6 +188,24 @@ func _Notify_RemoveBlacklisted_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Notify_GetRequestStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).GetRequestStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_GetRequestStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).GetRequestStatus(ctx, req.(*RequestID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Notify_ServiceDesc is the grpc.ServiceDesc for Notify service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var Notify_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveBlacklisted",
 			Handler:    _Notify_RemoveBlacklisted_Handler,
+		},
+		{
+			MethodName: "GetRequestStatus",
+			Handler:    _Notify_GetRequestStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

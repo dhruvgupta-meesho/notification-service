@@ -12,7 +12,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func (sc *ServiceContainer) SendMail (msg string, id int64) {
+func (sc *ServiceContainer) SendMail (msg string, id string) {
 
 	err := godotenv.Load(".env")
 	
@@ -27,7 +27,7 @@ func (sc *ServiceContainer) SendMail (msg string, id int64) {
 	port := "587"
 	address := host + ":" + port
 
-	incomingReq, _ := database.GetEmailRequest(sc.Db,int64(id))
+	incomingReq, _ := database.GetEmailRequest(sc.Db, id)
 	
 	toEmailAddress := incomingReq.EmailId
 	// toEmailAddress := "dhruvgupta3377@gmail.com"
@@ -93,7 +93,7 @@ func (sc *ServiceContainer) SendMail (msg string, id int64) {
 // }
 
 
-func (sc *ServiceContainer) checkEmailAddr(address string, toEmailAddress string, id int64) {
+func (sc *ServiceContainer) checkEmailAddr(address string, toEmailAddress string, id string) {
 	host := address
 	fromEmail := "dhruvipul1234@gmail.com"
 	password := os.Getenv("EMAIL_PASS")
@@ -137,7 +137,7 @@ func (sc *ServiceContainer) checkEmailAddr(address string, toEmailAddress string
 	log.Println("Email address appears valid:", toEmailAddress)
 }
 
-func updateFailure(sc *ServiceContainer, toEmailAddress string, id int64, comment string) {
+func updateFailure(sc *ServiceContainer, toEmailAddress string, id string, comment string) {
 	createIndex(sc.Es, "Error: "+toEmailAddress)
 	database.UpdateEmailRequest(sc.Db, &database.Req{
 		Id:              id,

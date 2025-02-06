@@ -7,7 +7,7 @@ import (
 	"github.com/IBM/sarama"
 )
 
-func SendKafka (id int64){
+func SendKafka (id string){
 	brokers := []string{"localhost:29092"}
 
 	topic := "notify"
@@ -29,7 +29,7 @@ func SendKafka (id int64){
 
 	res, _ := json.Marshal(struct{
 		EmailMsg string
-		Id int64
+		Id string
 	}{
 		"Send Email to this", id,
 	})
