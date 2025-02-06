@@ -24,7 +24,7 @@ func (sc *ServiceContainer)Kafkainit(){
 	}
 
 	brokers := "localhost:" + os.Getenv("KAFKA_PORT")
-	topic := "notify"
+	topic := os.Getenv("KAFKA_NOTIFY_TOPIC")
 	consumer, err := sarama.NewConsumer(strings.Split(brokers, ","), nil)
 
 	if err != nil {
@@ -59,7 +59,10 @@ func (sc *ServiceContainer)Kafkainit(){
 			select {
 			case msg := <-partitionConsumer.Messages():
 				var v kafkamsg
-				json.Unmarshal(msg.Value, &v)
+				err = json.Unmarshal(msg.Value, &v)
+				if err!=nil{
+					log.Printf("Error Unmarshal Json %s", err)
+				}
 				log.Printf("Message received: for id = %s value = %s", v.Id, string(v.EmailMsg))
 				sc.SendMail(string(msg.Value), v.Id)
 			case <-signals:

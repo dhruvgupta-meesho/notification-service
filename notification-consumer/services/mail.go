@@ -23,8 +23,8 @@ func (sc *ServiceContainer) SendMail (msg string, id string) {
 	from := "dhruvipul1234@gmail.com"
 	password := os.Getenv("EMAIL_PASS")
 
-	host := "smtp.gmail.com"
-	port := "587"
+	host := os.Getenv("EMAIL_HOST")
+	port := os.Getenv("EMAIL_PORT")
 	address := host + ":" + port
 
 	incomingReq, _ := database.GetEmailRequest(sc.Db, id)

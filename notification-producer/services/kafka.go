@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/IBM/sarama"
 	"github.com/joho/godotenv"
@@ -14,9 +15,9 @@ func SendKafka (id string){
 		log.Fatal("Couldn't load env variables! ", err)
 	}
 
-	brokers := []string{"localhost:29092"}
+	brokers := []string{"localhost:"+ os.Getenv("KAFKA_BROKER")}
 
-	topic := "notify"
+	topic := os.Getenv("KAFKA_NOTIFY_TOPIC")
 
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
