@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "model/";
+
+message EmailRequest{
+    int32 id = 1;
+    string emailId = 2;
+    string message = 3;
+    int32 failure_code = 4;
+    string failure_comments = 5;
+    optional string created_at = 6;
+    optional string updated_at = 7;
+}
+
+message Email{
+    string emailId = 2;
+}
+
+service Notify{
+    rpc SendNotificationInfo(EmailRequest) returns (GenericResponse){}
+    rpc AddBlacklisted(Email) returns (GenericResponse){}
+    rpc RemoveBlacklisted(Email) returns (GenericResponse){}
+}
+  
+message GenericResponse {
+    string message = 1;
+}
