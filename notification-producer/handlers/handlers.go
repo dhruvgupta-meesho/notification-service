@@ -31,15 +31,26 @@ func (s *Server) SendNotificationInfo(ctx context.Context, in *model.EmailReques
 	return &model.GenericResponse{Message: "Info Recieved"}, nil
 }
 
-func (s *Server) AddBlacklisted(ctx context.Context, in *model.Email) (*model.GenericResponse, error){
-	msg  := services.AddBlacklistEmail(s.RDB, in.EmailId)
+// func (s *Server) AddBlacklisted(ctx context.Context, in *model.Email) (*model.GenericResponse, error){
+// 	msg  := services.AddBlacklistEmail(s.RDB, in.EmailId)
+// 	return &model.GenericResponse{Message: msg}, nil
+// }
+
+// func (s *Server) RemoveBlacklisted(ctx context.Context, in *model.Email) (*model.GenericResponse, error){
+// 	msg := services.RemoveBlacklistEmail(s.RDB, in.EmailId)
+// 	return &model.GenericResponse{Message: msg}, nil
+// }
+
+func (s *Server) AddBlacklisted(ctx context.Context, in *model.EmailList) (*model.GenericResponse, error) {
+	msg := services.AddBlacklistEmails(s.RDB, in.EmailIds)
 	return &model.GenericResponse{Message: msg}, nil
 }
 
-func (s *Server) RemoveBlacklisted(ctx context.Context, in *model.Email) (*model.GenericResponse, error){
-	msg := services.RemoveBlacklistEmail(s.RDB, in.EmailId)
+func (s *Server) RemoveBlacklisted(ctx context.Context, in *model.EmailList) (*model.GenericResponse, error) {
+	msg := services.RemoveBlacklistEmails(s.RDB, in.EmailIds)
 	return &model.GenericResponse{Message: msg}, nil
 }
+
 
 func (s *Server) GetRequestStatus(ctx context.Context, in *model.RequestID) (*model.RequestStatusResponse, error){
 	req, _ := database.GetEmailRequest(s.DB, in.Id)

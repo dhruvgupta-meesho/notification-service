@@ -7,8 +7,12 @@ message EmailRequest{
     string message = 3;
 }
 
-message Email{
-    string emailId = 2;
+// message Email{
+//     string emailId = 2;
+// }
+
+message EmailList {
+    repeated string emailIds = 1;
 }
 
 message RequestID{
@@ -28,7 +32,7 @@ message RequestStatusResponse{
 
 service Notify{
     rpc SendNotificationInfo(EmailRequest) returns (GenericResponse){}
-    rpc AddBlacklisted(Email) returns (GenericResponse){}
-    rpc RemoveBlacklisted(Email) returns (GenericResponse){}
+    rpc AddBlacklisted(EmailList) returns (GenericResponse){}
+    rpc RemoveBlacklisted(EmailList) returns (GenericResponse){}
     rpc GetRequestStatus(RequestID) returns(RequestStatusResponse){}
 }

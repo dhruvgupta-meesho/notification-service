@@ -12,7 +12,7 @@ func main() {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 	sc := services.MakeContainer()
-	go sc.Kafkainit()
+	sc.Kafkainit()
 
 	for {
 		select {

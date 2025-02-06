@@ -5,9 +5,15 @@ import (
 	"log"
 
 	"github.com/IBM/sarama"
+	"github.com/joho/godotenv"
 )
 
 func SendKafka (id string){
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Couldn't load env variables! ", err)
+	}
+
 	brokers := []string{"localhost:29092"}
 
 	topic := "notify"

@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/IBM/sarama"
+	"github.com/joho/godotenv"
 )
 
 type kafkamsg struct{
@@ -17,7 +18,12 @@ type kafkamsg struct{
 }
 
 func (sc *ServiceContainer)Kafkainit(){
-	brokers := "localhost:29092"
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Couldn't load env variables! ", err)
+	}
+
+	brokers := "localhost:" + os.Getenv("KAFKA_PORT")
 	topic := "notify"
 	consumer, err := sarama.NewConsumer(strings.Split(brokers, ","), nil)
 

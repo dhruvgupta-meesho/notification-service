@@ -3,15 +3,22 @@ package services
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
 func MakeRedisConn() *redis.Client{
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Couldn't load env variables! ", err)
+	}
+	
 	rdb := redis.NewClient(&redis.Options{
-        Addr:	  "localhost:6379",
-        Password: "",
+        Addr:	  "localhost:" + os.Getenv("REDIS_PORT"),
+        Password: os.Getenv("REDIS_PASS"),
         DB:		  0,
     })
 	return rdb

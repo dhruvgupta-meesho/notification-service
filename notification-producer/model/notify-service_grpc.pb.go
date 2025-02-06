@@ -30,8 +30,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotifyClient interface {
 	SendNotificationInfo(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*GenericResponse, error)
-	AddBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
-	RemoveBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error)
+	AddBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error)
+	RemoveBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error)
 	GetRequestStatus(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*RequestStatusResponse, error)
 }
 
@@ -53,7 +53,7 @@ func (c *notifyClient) SendNotificationInfo(ctx context.Context, in *EmailReques
 	return out, nil
 }
 
-func (c *notifyClient) AddBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error) {
+func (c *notifyClient) AddBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GenericResponse)
 	err := c.cc.Invoke(ctx, Notify_AddBlacklisted_FullMethodName, in, out, cOpts...)
@@ -63,7 +63,7 @@ func (c *notifyClient) AddBlacklisted(ctx context.Context, in *Email, opts ...gr
 	return out, nil
 }
 
-func (c *notifyClient) RemoveBlacklisted(ctx context.Context, in *Email, opts ...grpc.CallOption) (*GenericResponse, error) {
+func (c *notifyClient) RemoveBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GenericResponse)
 	err := c.cc.Invoke(ctx, Notify_RemoveBlacklisted_FullMethodName, in, out, cOpts...)
@@ -88,8 +88,8 @@ func (c *notifyClient) GetRequestStatus(ctx context.Context, in *RequestID, opts
 // for forward compatibility.
 type NotifyServer interface {
 	SendNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error)
-	AddBlacklisted(context.Context, *Email) (*GenericResponse, error)
-	RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error)
+	AddBlacklisted(context.Context, *EmailList) (*GenericResponse, error)
+	RemoveBlacklisted(context.Context, *EmailList) (*GenericResponse, error)
 	GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error)
 	mustEmbedUnimplementedNotifyServer()
 }
@@ -104,10 +104,10 @@ type UnimplementedNotifyServer struct{}
 func (UnimplementedNotifyServer) SendNotificationInfo(context.Context, *EmailRequest) (*GenericResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendNotificationInfo not implemented")
 }
-func (UnimplementedNotifyServer) AddBlacklisted(context.Context, *Email) (*GenericResponse, error) {
+func (UnimplementedNotifyServer) AddBlacklisted(context.Context, *EmailList) (*GenericResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddBlacklisted not implemented")
 }
-func (UnimplementedNotifyServer) RemoveBlacklisted(context.Context, *Email) (*GenericResponse, error) {
+func (UnimplementedNotifyServer) RemoveBlacklisted(context.Context, *EmailList) (*GenericResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveBlacklisted not implemented")
 }
 func (UnimplementedNotifyServer) GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error) {
@@ -153,7 +153,7 @@ func _Notify_SendNotificationInfo_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _Notify_AddBlacklisted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Email)
+	in := new(EmailList)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,13 +165,13 @@ func _Notify_AddBlacklisted_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: Notify_AddBlacklisted_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotifyServer).AddBlacklisted(ctx, req.(*Email))
+		return srv.(NotifyServer).AddBlacklisted(ctx, req.(*EmailList))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Notify_RemoveBlacklisted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Email)
+	in := new(EmailList)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func _Notify_RemoveBlacklisted_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: Notify_RemoveBlacklisted_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotifyServer).RemoveBlacklisted(ctx, req.(*Email))
+		return srv.(NotifyServer).RemoveBlacklisted(ctx, req.(*EmailList))
 	}
 	return interceptor(ctx, in, info, handler)
 }
