@@ -29,8 +29,8 @@ func (sc *ServiceContainer) SendMail (msg string, id int64) {
 
 	incomingReq, _ := database.GetEmailRequest(sc.Db,int64(id))
 	
-	// toEmailAddress := []string{incomingReq.EmailId}
-	toEmailAddress := "dhruvgupta3377@gmail.com"
+	toEmailAddress := incomingReq.EmailId
+	// toEmailAddress := "dhruvgupta3377@gmail.com"
 	to := []string{toEmailAddress}
 
 	sc.checkEmailAddr(address, toEmailAddress, id)
