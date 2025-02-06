@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "model/";
+
+message EmailRequest{
+    string emailId = 2;
+    string message = 3;
+}
+
+// message Email{
+//     string emailId = 2;
+// }
+
+message EmailList {
+    repeated string emailIds = 1;
+}
+
+message RequestID{
+    string id = 1;
+}
+
+message GenericResponse {
+    string message = 1;
+}
+
+message RequestStatusResponse{
+    string emailId = 1;
+    string message = 2;
+    int64 failure_code = 3;
+    string failure_comment = 4;
+}
+
+service Notify{
+    rpc SendNotificationInfo(EmailRequest) returns (GenericResponse){}
+    rpc AddBlacklisted(EmailList) returns (GenericResponse){}
+    rpc RemoveBlacklisted(EmailList) returns (GenericResponse){}
+    rpc GetRequestStatus(RequestID) returns(RequestStatusResponse){}
+}
