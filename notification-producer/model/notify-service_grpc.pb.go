@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -24,6 +25,7 @@ const (
 	Notify_RemoveBlacklisted_FullMethodName    = "/Notify/RemoveBlacklisted"
 	Notify_GetRequestStatus_FullMethodName     = "/Notify/GetRequestStatus"
 	Notify_GetLogs_FullMethodName              = "/Notify/GetLogs"
+	Notify_GetBlacklistedEmails_FullMethodName = "/Notify/GetBlacklistedEmails"
 )
 
 // NotifyClient is the client API for Notify service.
@@ -35,6 +37,7 @@ type NotifyClient interface {
 	RemoveBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error)
 	GetRequestStatus(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*RequestStatusResponse, error)
 	GetLogs(ctx context.Context, in *LogRequest, opts ...grpc.CallOption) (*LogRequestResp, error)
+	GetBlacklistedEmails(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmailList, error)
 }
 
 type notifyClient struct {
@@ -95,6 +98,16 @@ func (c *notifyClient) GetLogs(ctx context.Context, in *LogRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *notifyClient) GetBlacklistedEmails(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmailList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmailList)
+	err := c.cc.Invoke(ctx, Notify_GetBlacklistedEmails_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NotifyServer is the server API for Notify service.
 // All implementations must embed UnimplementedNotifyServer
 // for forward compatibility.
@@ -104,6 +117,7 @@ type NotifyServer interface {
 	RemoveBlacklisted(context.Context, *EmailList) (*GenericResponse, error)
 	GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error)
 	GetLogs(context.Context, *LogRequest) (*LogRequestResp, error)
+	GetBlacklistedEmails(context.Context, *emptypb.Empty) (*EmailList, error)
 	mustEmbedUnimplementedNotifyServer()
 }
 
@@ -128,6 +142,9 @@ func (UnimplementedNotifyServer) GetRequestStatus(context.Context, *RequestID) (
 }
 func (UnimplementedNotifyServer) GetLogs(context.Context, *LogRequest) (*LogRequestResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLogs not implemented")
+}
+func (UnimplementedNotifyServer) GetBlacklistedEmails(context.Context, *emptypb.Empty) (*EmailList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlacklistedEmails not implemented")
 }
 func (UnimplementedNotifyServer) mustEmbedUnimplementedNotifyServer() {}
 func (UnimplementedNotifyServer) testEmbeddedByValue()                {}
@@ -240,6 +257,24 @@ func _Notify_GetLogs_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Notify_GetBlacklistedEmails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).GetBlacklistedEmails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_GetBlacklistedEmails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).GetBlacklistedEmails(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Notify_ServiceDesc is the grpc.ServiceDesc for Notify service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +301,10 @@ var Notify_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLogs",
 			Handler:    _Notify_GetLogs_Handler,
+		},
+		{
+			MethodName: "GetBlacklistedEmails",
+			Handler:    _Notify_GetBlacklistedEmails_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

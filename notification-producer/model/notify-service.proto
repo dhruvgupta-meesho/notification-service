@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option go_package = "model/";
+import "google/protobuf/empty.proto";
 
 message EmailRequest{
     string emailId = 2;
@@ -54,5 +55,5 @@ service Notify{
     rpc RemoveBlacklisted(EmailList) returns (GenericResponse){}
     rpc GetRequestStatus(RequestID) returns(RequestStatusResponse){}
     rpc GetLogs(LogRequest) returns(LogRequestResp){}
-    // rpc GetBlacklistedEmails()returns(GenericResponse){}
+    rpc GetBlacklistedEmails(google.protobuf.Empty)returns(EmailList){}
 }

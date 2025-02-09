@@ -87,9 +87,11 @@ func RemoveBlacklistEmails(rdb *redis.Client, emails []string) string {
 }
 
 
-func GetAllBlacklistedEmails(rdb *redis.Client)string{
+func GetAllBlacklistedEmails(rdb *redis.Client)[]string{
 	ctx := context.Background()
-	res := rdb.SMembers(ctx, "blocked")
-	log.Print(res.String())
-	return res.String()
+	res, err := rdb.SMembers(ctx, "blocked").Result()
+	if err!= nil{
+		log.Printf("Error Getting all the blocked ids ", err)
+	}
+	return res
 }

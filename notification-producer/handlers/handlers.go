@@ -15,6 +15,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/hashicorp/go-uuid"
 	"github.com/redis/go-redis/v9"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"database/sql"
 
@@ -68,6 +69,14 @@ func (s *Server) GetRequestStatus(ctx context.Context, in *model.RequestID) (*mo
 		FailureComment: req.Failure_comments,
 	}, nil
 }
+
+func (s *Server) GetBlacklistedEmails(ctx context.Context, in *emptypb.Empty) (*model.EmailList, error) {
+	emails := services.GetAllBlacklistedEmails(s.RDB)
+	return &model.EmailList{
+		EmailIds: emails,
+	}, nil
+}
+
 
 func (s *Server) GetLogs(ctx context.Context, in *model.LogRequest) (*model.LogRequestResp, error){
 	logs := services.FetchDocuments(s.ES, in)
