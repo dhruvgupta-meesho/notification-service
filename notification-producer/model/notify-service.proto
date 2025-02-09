@@ -23,6 +23,12 @@ message GenericResponse {
     string message = 1;
 }
 
+message LogRequest{
+    string email = 1;
+    string start = 2;
+    string end = 3;
+}
+
 message RequestStatusResponse{
     string emailId = 1;
     string message = 2;
@@ -30,9 +36,23 @@ message RequestStatusResponse{
     string failure_comment = 4;
 }
 
+message Log{
+    string id = 1; 
+	string email = 2;
+	string comment = 3;
+	string timestamp = 4;
+}
+
+message LogRequestResp{
+    string message = 1;
+    repeated Log logs = 10;
+}
+
 service Notify{
     rpc SendNotificationInfo(EmailRequest) returns (GenericResponse){}
     rpc AddBlacklisted(EmailList) returns (GenericResponse){}
     rpc RemoveBlacklisted(EmailList) returns (GenericResponse){}
     rpc GetRequestStatus(RequestID) returns(RequestStatusResponse){}
+    rpc GetLogs(LogRequest) returns(LogRequestResp){}
+    // rpc GetBlacklistedEmails()returns(GenericResponse){}
 }

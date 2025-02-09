@@ -23,6 +23,7 @@ const (
 	Notify_AddBlacklisted_FullMethodName       = "/Notify/AddBlacklisted"
 	Notify_RemoveBlacklisted_FullMethodName    = "/Notify/RemoveBlacklisted"
 	Notify_GetRequestStatus_FullMethodName     = "/Notify/GetRequestStatus"
+	Notify_GetLogs_FullMethodName              = "/Notify/GetLogs"
 )
 
 // NotifyClient is the client API for Notify service.
@@ -33,6 +34,7 @@ type NotifyClient interface {
 	AddBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error)
 	RemoveBlacklisted(ctx context.Context, in *EmailList, opts ...grpc.CallOption) (*GenericResponse, error)
 	GetRequestStatus(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*RequestStatusResponse, error)
+	GetLogs(ctx context.Context, in *LogRequest, opts ...grpc.CallOption) (*LogRequestResp, error)
 }
 
 type notifyClient struct {
@@ -83,6 +85,16 @@ func (c *notifyClient) GetRequestStatus(ctx context.Context, in *RequestID, opts
 	return out, nil
 }
 
+func (c *notifyClient) GetLogs(ctx context.Context, in *LogRequest, opts ...grpc.CallOption) (*LogRequestResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LogRequestResp)
+	err := c.cc.Invoke(ctx, Notify_GetLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NotifyServer is the server API for Notify service.
 // All implementations must embed UnimplementedNotifyServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type NotifyServer interface {
 	AddBlacklisted(context.Context, *EmailList) (*GenericResponse, error)
 	RemoveBlacklisted(context.Context, *EmailList) (*GenericResponse, error)
 	GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error)
+	GetLogs(context.Context, *LogRequest) (*LogRequestResp, error)
 	mustEmbedUnimplementedNotifyServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedNotifyServer) RemoveBlacklisted(context.Context, *EmailList) 
 }
 func (UnimplementedNotifyServer) GetRequestStatus(context.Context, *RequestID) (*RequestStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRequestStatus not implemented")
+}
+func (UnimplementedNotifyServer) GetLogs(context.Context, *LogRequest) (*LogRequestResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLogs not implemented")
 }
 func (UnimplementedNotifyServer) mustEmbedUnimplementedNotifyServer() {}
 func (UnimplementedNotifyServer) testEmbeddedByValue()                {}
@@ -206,6 +222,24 @@ func _Notify_GetRequestStatus_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Notify_GetLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).GetLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_GetLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).GetLogs(ctx, req.(*LogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Notify_ServiceDesc is the grpc.ServiceDesc for Notify service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var Notify_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRequestStatus",
 			Handler:    _Notify_GetRequestStatus_Handler,
+		},
+		{
+			MethodName: "GetLogs",
+			Handler:    _Notify_GetLogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -12,9 +12,8 @@ import (
 
 type ServiceContainer struct{
 	Rdb *redis.Client
-	Db *sql.DB
-	Es *elasticsearch.Client
-
+	Db  *sql.DB
+	Es  *elasticsearch.Client
 }
 
 func MakeContainer() *ServiceContainer{

@@ -67,6 +67,7 @@ func AddBlacklistEmails(rdb *redis.Client, emails []string) string {
 		return "No new emails added to the blacklist"
 	}
 	log.Println("Successfully blacklisted emails")
+	GetAllBlacklistedEmails(rdb)
 	return "Successfully blacklisted emails"
 }
 
@@ -83,4 +84,12 @@ func RemoveBlacklistEmails(rdb *redis.Client, emails []string) string {
 	}
 	log.Println("Successfully removed emails from blacklist")
 	return "Successfully removed emails from blacklist"
+}
+
+
+func GetAllBlacklistedEmails(rdb *redis.Client)string{
+	ctx := context.Background()
+	res := rdb.SMembers(ctx, "blocked")
+	log.Print(res.String())
+	return res.String()
 }

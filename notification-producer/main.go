@@ -23,9 +23,12 @@ func main() {
 
 	s := grpc.NewServer()
 
+	es := services.GetESClient()
+
 	model.RegisterNotifyServer(s,&handler.Server{
 		DB: db,
 		RDB: rdb,
+		ES: es,
 	})
 
 	log.Printf("gRPC server listening at %v", lis.Addr())
